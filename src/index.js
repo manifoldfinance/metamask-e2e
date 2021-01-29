@@ -1,9 +1,7 @@
 import MetaMaskOnboarding from '@metamask/onboarding'
-// eslint-disable-next-line camelcase
-import { encrypt, recoverPersonalSignature, recoverTypedSignatureLegacy, recoverTypedSignature, recoverTypedSignature_v4 } from 'eth-sig-util'
 import { ethers } from 'ethers'
-import { toChecksumAddress } from 'ethereumjs-util'
-import { hstBytecode, hstAbi, piggybankBytecode, piggybankAbi } from './constants.json'
+import { hstAbi, hstBytecode, piggybankAbi, piggybankBytecode } from './constants.json'
+import { requestAccounts } from './modules/BasicActions'
 
 let ethersProvider
 let hstFactory
@@ -54,9 +52,8 @@ const initialize = async () => {
   let accounts
   let accountButtonsInitialized = false
 
-  const accountButtons = [
-    sendButton,
-  ]
+  // Button List
+  const accountButtons = []
 
   const isMetaMaskConnected = () => accounts && accounts.length > 0
 
@@ -68,9 +65,7 @@ const initialize = async () => {
 
   const onClickConnect = async () => {
     try {
-      const newAccounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
+      const newAccounts = requestAccounts()
       handleNewAccounts(newAccounts)
     } catch (error) {
       console.error(error)
@@ -86,7 +81,7 @@ const initialize = async () => {
       // clearTextDisplays()
     } else {
       // deployButton.disabled = false
-      sendButton.disabled = false
+      // sendButton.disabled = false
       // createToken.disabled = false
       // personalSign.disabled = false
       // signTypedData.disabled = false
@@ -114,20 +109,20 @@ const initialize = async () => {
       onboardButton.disabled = false
     }
   }
-
-  const initializeAccountButtons = () => {
-
+  const getAccountsButtonAction = () => {
     getAccountsButton.onclick = async () => {
       try {
-        const _accounts = await ethereum.request({
-          method: 'eth_accounts',
-        })
+        const _accounts = await ethereum.request({ method: 'eth_accounts' })
         getAccountsResults.innerHTML = _accounts[0] || 'Not able to get accounts'
       } catch (err) {
         console.error(err)
         getAccountsResults.innerHTML = `Error: ${err.message}`
       }
     }
+  }
+
+  const initializeAccountButtons = () => {
+    getAccountsButtonAction()
 
     if (accountButtonsInitialized) {
       return
@@ -148,21 +143,12 @@ const initialize = async () => {
     chainIdDiv.innerHTML = chainId
   }
 
-  function handleNewNetwork (networkId) {
-    networkDiv.innerHTML = networkId
-  }
-
   async function getNetworkAndChainId () {
     try {
       const chainId = await ethereum.request({
         method: 'eth_chainId',
       })
       handleNewChain(chainId)
-
-      const networkId = await ethereum.request({
-        method: 'net_version',
-      })
-      handleNewNetwork(networkId)
     } catch (err) {
       console.error(err)
     }
@@ -176,7 +162,6 @@ const initialize = async () => {
     getNetworkAndChainId()
 
     ethereum.on('chainChanged', handleNewChain)
-    ethereum.on('networkChanged', handleNewNetwork)
     ethereum.on('accountsChanged', handleNewAccounts)
 
     try {
