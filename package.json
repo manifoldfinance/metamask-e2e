@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "deploy": "npx gh-pages --message 'deploy webdapp' --dist ."
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/manifoldfinance/metamask-e2e/issues"
   },
-  "homepage": "https://github.com/manifoldfinance/metamask-e2e#readme"
+  "homepage": "https://github.com/manifoldfinance/metamask-e2e#readme",
+  "devDependencies": {
+    "gh-pages": "2.0"
+  }
 }
