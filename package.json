@@ -1,15 +1,15 @@
 {
   "name": "metamask-e2e-dapp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "deploy": "./deploy.sh",
-    "lint": "eslint . --ext js,json && prettier ./src -c",
-    "lint:fix": "eslint . --fix --ext js,json && prettier ./src -c --write",
+    "lint": "npx eslint . --ext js,json && prettier ./src -c",
+    "lint:fix": "npx eslint . --fix --ext js,json && prettier ./src -c --write",
     "start": "npx webpack-dev-server",
     "build": "npx webpack --mode production",
-    "test": "yarn lint",
-    "prepublishOnly": "yarn test && yarn build",
-    "gh-pages": "./node_modules/.bin/gh-pages -d ."
+    "test": "npm run-script lint",
+    "prepublishOnly": "npm run-script test && npm run-script build",
+    "gh-pages": "npx gh-pages -d ."
   },
   "publishConfig": {
     "access": "private"
